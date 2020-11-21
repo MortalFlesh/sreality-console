@@ -1,0 +1,100 @@
+[
+    {
+        "_embedded": {
+            "estates": [
+                {
+                    "has_panorama": 0,
+                    "labels": [
+                        "Lod\u017eie",
+                        "Sklep",
+                        "Nevybaven\u00fd",
+                        "Bus 2 min. p\u011b\u0161ky",
+                        "Restaurace 4 min. p\u011b\u0161ky"
+                    ],
+                    "is_auction": false,
+                    "exclusively_at_rk": 1,
+                    "has_floor_plan": 1,
+                    "locality": "\u00davoz, Brno - Star\u00e9 Brno",
+                    "has_video": false,
+                    "_links": {
+                        "self": {
+                            "href": "/cs/v2/estates/917774172"
+                        },
+                        "images": [
+                            {
+                                "href": "https://d18-a.sdn.cz/d_18/c_img_QL_JV/efcXAi.jpeg?fl=res,400,300,3|shr,,20|jpg,90"
+                            },
+                            {
+                                "href": "https://d18-a.sdn.cz/d_18/c_img_QR_Lg/SUWXDl.jpeg?fl=res,400,300,3|shr,,20|jpg,90"
+                            },
+                            {
+                                "href": "https://d18-a.sdn.cz/d_18/c_img_QJ_JG/gofK6t.jpeg?fl=res,400,300,3|shr,,20|jpg,90"
+                            }
+                        ]
+                    },
+                    "new": false,
+                    "hash_id": 917774172,
+                    "attractive_offer": 0,
+                    "price": 7980000,
+                    "price_czk": {
+                        "value_raw": 7980000,
+                        "unit": "",
+                        "name": "Celkov\u00e1 cena"
+                    },
+                    "name": "Prodej bytu 4+1\u00a0110\u00a0m\u00b2",
+                    "region_tip": 0,
+                    "gps": {
+                        "lat": 49.194374,
+                        "lon": 16.595127
+                    }
+                },
+                {
+                    "has_panorama": 0,
+                    "labels": [
+                        "Lod\u017eie",
+                        "Sklep",
+                        "Nevybaven\u00fd",
+                        "Bus 2 min. p\u011b\u0161ky",
+                        "Restaurace 4 min. p\u011b\u0161ky"
+                    ],
+                    "is_auction": false,
+                    "exclusively_at_rk": 1,
+                    "has_floor_plan": 1,
+                    "locality": "\u00davoz, Brno - Star\u00e9 Brno",
+                    "has_video": false,
+                    "_links": {
+                        "self": {
+                            "href": "/cs/v2/estates/917774172"
+                        },
+                        "images": [
+                            {
+                                "href": "https://d18-a.sdn.cz/d_18/c_img_QL_JV/efcXAi.jpeg?fl=res,400,300,3|shr,,20|jpg,90"
+                            },
+                            {
+                                "href": "https://d18-a.sdn.cz/d_18/c_img_QR_Lg/SUWXDl.jpeg?fl=res,400,300,3|shr,,20|jpg,90"
+                            },
+                            {
+                                "href": "https://d18-a.sdn.cz/d_18/c_img_QJ_JG/gofK6t.jpeg?fl=res,400,300,3|shr,,20|jpg,90"
+                            }
+                        ]
+                    },
+                    "new": false,
+                    "hash_id": 2901339228,
+                    "attractive_offer": 0,
+                    "price": 7980000,
+                    "price_czk": {
+                        "value_raw": 7980000,
+                        "unit": "",
+                        "name": "Celkov\u00e1 cena"
+                    },
+                    "name": "Prodej bytu 4+1\u00a0110\u00a0m\u00b2",
+                    "region_tip": 0,
+                    "gps": {
+                        "lat": 49.194374,
+                        "lon": 16.595127
+                    }
+                }
+            ]
+        }
+    }
+]

@@ -18,9 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="src/ErrorHandling/ErrorHandling.fsproj" />
     <ProjectReference Include="src/Notification/Notification.fsproj" />
     <ProjectReference Include="src/Storage/Storage.fsproj" />
     <ProjectReference Include="src/Config/Config.fsproj" />
+    <ProjectReference Include="src/Api/Api.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

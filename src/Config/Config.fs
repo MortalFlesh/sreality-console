@@ -1,7 +1,11 @@
 namespace MF.Config
 
+open MF.Api
+open MF.Notification
+
 type Config = {
-    Notifications: MF.Notification.Whatsapp.Config
+    Sreality: Sreality.Search list
+    Notifications: Whatsapp.Config
 }
 
 [<RequireQualifiedAccess>]
@@ -20,6 +24,18 @@ module Config =
                 |> ConfigSchema.Parse
 
             Some {
+                Sreality =
+                    parsed.Sreality
+                    |> Seq.map (fun search ->
+                        let search: Sreality.Search =
+                            {
+                                Title = search.Title
+                                Parameters = search.Param
+                            }
+                        search
+                    )
+                    |> Seq.toList
+
                 Notifications = {
                     AccountSid = parsed.Notifications.AccountSid
                     AuthToken = parsed.Notifications.AuthToken

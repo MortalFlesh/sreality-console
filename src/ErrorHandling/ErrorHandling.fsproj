@@ -9,12 +9,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../Api/Api.fsproj" />
-        <ProjectReference Include="../Notification/Notification.fsproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Include="Config.fs" />
+        <Compile Include="Result.fs" />
+        <Compile Include="Option.fs" />
     </ItemGroup>
 
     <Import Project="..\..\.paket\Paket.Restore.targets" />

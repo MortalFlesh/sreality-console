@@ -2,7 +2,7 @@ open System
 open System.IO
 open MF.ConsoleApplication
 open MF.Sreality.Console
-open ErrorHandling
+open MF.ErrorHandling
 
 [<EntryPoint>]
 let main argv =
