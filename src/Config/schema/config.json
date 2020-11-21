@@ -1,0 +1,10 @@
+[
+    {
+        "notifications": {
+            "accountSid": "[Twilio account SID]",
+            "authToken": "[AuthToken]",
+            "twilioNumber": "+1...",
+            "targetNumber": "[your phonenumber]"
+        }
+    }
+]

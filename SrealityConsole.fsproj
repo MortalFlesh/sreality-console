@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="src/Notification/Notification.fsproj" />
     <ProjectReference Include="src/Storage/Storage.fsproj" />
+    <ProjectReference Include="src/Config/Config.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
