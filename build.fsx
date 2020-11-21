@@ -16,7 +16,7 @@ type ToolDir =
     | Local of string
 
 // ========================================================================================================
-// === F# / Console Application fake build ======================================================== 1.3.0 =
+// === F# / Console Application fake build ======================================================== 1.4.0 =
 // --------------------------------------------------------------------------------------------------------
 // Options:
 //  - no-clean   - disables clean of dirs in the first step (required on CI)
@@ -174,8 +174,7 @@ Target.create "AssemblyInfo" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
-    !! "**/*.fsproj"
-    -- "example/**/*.*proj"
+    !! "./*.fsproj"
     |> Seq.iter (DotNet.build id)
 )
 
@@ -238,9 +237,7 @@ let zipRelease releaseDir =
 Target.create "Release" (fun _ ->
     let releaseDir = Path.getFullName "./dist"
 
-    !! "**/*.*proj"
-    -- "example/**/*.*proj"
-    -- "tests/**/*.*proj"
+    !! "./*.fsproj"
     |> Seq.collect (fun project -> runtimeIds |> List.collect (fun runtimeId -> [project, runtimeId]))
     |> Seq.iter (fun (project, runtimeId) ->
         sprintf "publish -c Release /p:PublishSingleFile=true -o %s/%s --self-contained -r %s %s" releaseDir runtimeId runtimeId project
