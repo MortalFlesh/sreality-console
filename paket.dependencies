@@ -1,0 +1,27 @@
+framework: net5.0
+storage: none
+
+source https://api.nuget.org/v3/index.json
+nuget FSharp.Core
+nuget FSharp.Data ~> 3.3
+nuget MF.ConsoleApplication ~> 2.0
+nuget Twilio ~> 5.50
+nuget Google.Apis.Sheets.v4
+
+group Tests
+    storage: none
+    source https://api.nuget.org/v3/index.json
+    nuget Expecto
+    nuget YoloDev.Expecto.TestSdk
+
+// [ FAKE GROUP ]
+group Build
+    storage none
+    source https://api.nuget.org/v3/index.json
+    nuget Fake.DotNet.Cli
+    nuget Fake.IO.FileSystem
+    nuget Fake.IO.Zip
+    nuget Fake.Core.Target
+    nuget Fake.DotNet.AssemblyInfoFile
+    nuget Fake.Core.ReleaseNotes
+    nuget Fake.Tools.Git
