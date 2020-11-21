@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackageId>MF.SrealityConsole</PackageId>
+    <Description>Standalone console application for accessing sreality REST api</Description>
+    <Version>0.0.0</Version>
+    <PackageProjectUrl>https://github.com/MortalFlesh/sreality-console</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MortalFlesh/sreality-console.git</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageTags>sreality;console-application</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="src/Utils.fs" />
+
+    <!-- Internal libraries -->
+    <Compile Include="src/ErrorHandling/Result.fs" />
+    <Compile Include="src/ErrorHandling/Option.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="src/Console.fs" />
+
+    <!-- commands -->
+    <Compile Include="src/Command/Common.fs" />
+    <Compile Include="src/Command/FlatsCommand.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="src/Program.fs" />
+  </ItemGroup>
+
+  <Import Project=".paket\Paket.Restore.targets" />
+</Project>
