@@ -7,6 +7,7 @@ nuget FSharp.Data ~> 3.3
 nuget MF.ConsoleApplication ~> 2.0
 nuget Twilio ~> 5.50
 nuget Google.Apis.Sheets.v4
+nuget Newtonsoft.Json ~> 12.0
 
 group Tests
     storage: none

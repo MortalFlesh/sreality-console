@@ -196,3 +196,30 @@ module Utils =
     let tee f a =
         f a
         a
+
+[<RequireQualifiedAccess>]
+module Serialize =
+    module private Json =
+        open Newtonsoft.Json
+        open Newtonsoft.Json.Serialization
+
+        let private options () =
+            JsonSerializerSettings (
+                Formatting = Formatting.None,
+                ContractResolver =
+                    DefaultContractResolver (
+                        NamingStrategy = SnakeCaseNamingStrategy()
+                    )
+            )
+
+        let serialize obj =
+            JsonConvert.SerializeObject (obj, options())
+
+        let serializePretty obj =
+            let options = options()
+            options.Formatting <- Formatting.Indented
+
+            JsonConvert.SerializeObject (obj, options)
+
+    let toJsonPretty: obj -> string = Json.serializePretty
+    let toJson: obj -> string = Json.serialize

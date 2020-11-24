@@ -15,7 +15,9 @@ let main argv =
             Description = "Search properties on sreality."
             Help = None
             Arguments = []
-            Options = []
+            Options = [
+                Option.optional "storage" (Some "s") "A file path which will be used as a storage for results." None
+            ]
             Initialize = None
             Interact = None
             Execute = Command.PropertiesCommand.execute

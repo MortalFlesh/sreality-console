@@ -29,7 +29,35 @@ module Sreality =
 
     [<RequireQualifiedAccess>]
     module Property =
+        open MF.Utils
+
+        type private PropertySchema = JsonProvider<"schema/srealityProperty.json", SampleIsList = true>
+
         let searchTitle { SearchTitle = searchTitle } = searchTitle
+        let id { Id = id } = id
+
+        let serialize (property: Property) = property |> Serialize.toJson
+
+        let parse (value: string) =
+            try
+                let p = value |> PropertySchema.Parse
+
+                Some {
+                    SearchTitle = p.SearchTitle
+                    Id = p.Id |> string
+                    Name = p.Name
+                    Locality = p.Locality
+                    Price = p.Price
+                    Images = p.Images |> Seq.toList
+                    Detail = p.Detail
+                    Labels = p.Labels |> Seq.toList
+                    IsNew = p.IsNew
+                    HasFloorPlan = p.HasFloorPlan
+                    HasVideo = p.HasVideo
+                    HasPanorama = p.HasPanorama
+                }
+
+            with _ -> None
 
     type private BaseOptions = {
         BaseUrl: string

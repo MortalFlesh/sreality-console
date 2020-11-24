@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="../ErrorHandling/ErrorHandling.fsproj" />
+        <ProjectReference Include="../Utils/Utils.fsproj" />
     </ItemGroup>
 
     <ItemGroup>
