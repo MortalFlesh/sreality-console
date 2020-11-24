@@ -41,7 +41,10 @@ module PropertiesCommand =
     let execute: ExecuteCommand = fun (input, output) ->
         output.Title "Search Properties"
 
-        let config = ".sreality.json" |> Config.parse
+        let config =
+            input
+            |> Input.getOptionValue "config"
+            |> Config.parse
 
         let fileStorage =
             match input with
@@ -129,28 +132,29 @@ module PropertiesCommand =
                         |> notify
             )
 
-            let ``---`` = [ "---"; "---"; "---"]
-            // todo if verbose
-            currentValues
-            |> List.groupBy Sreality.Property.searchTitle
-            |> List.collect (fun (searchTitle, properties) ->
-                [
-                    yield ``---``
-                    yield [ "<c:gray>Search</c>"; sprintf "<c:cyan>%s</c>" searchTitle; sprintf "<c:magenta>%d</c>" properties.Length ]
-                    yield ``---``
+            if output.IsVerbose() then
+                let ``---`` = [ "---"; "---"; "---"]
+                // todo if verbose
+                currentValues
+                |> List.groupBy Sreality.Property.searchTitle
+                |> List.collect (fun (searchTitle, properties) ->
+                    [
+                        yield ``---``
+                        yield [ "<c:gray>Search</c>"; sprintf "<c:cyan>%s</c>" searchTitle; sprintf "<c:magenta>%d</c>" properties.Length ]
+                        yield ``---``
 
-                    yield!
-                        properties
-                        |> List.map (fun property ->
-                            [
-                                property.Id |> sprintf "<c:magenta>%s</c>"
-                                property.Name |> sprintf "<c:yellow>%s</c>"
-                                property.Price |> sprintf "<c:cyan>%d</c>"
-                            ]
-                        )
-                ]
-            )
-            |> output.Table [ "Id"; "Name"; "Price" ]
+                        yield!
+                            properties
+                            |> List.map (fun property ->
+                                [
+                                    property.Id |> sprintf "<c:magenta>%s</c>"
+                                    property.Name |> sprintf "<c:yellow>%s</c>"
+                                    property.Price |> sprintf "<c:cyan>%d</c>"
+                                ]
+                            )
+                    ]
+                )
+                |> output.Table [ "Id"; "Name"; "Price" ]
 
         | Error errors -> errors |> List.iter output.Error
 
