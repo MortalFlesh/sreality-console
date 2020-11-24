@@ -38,7 +38,7 @@
 
     <!-- commands -->
     <Compile Include="src/Command/Common.fs" />
-    <Compile Include="src/Command/FlatsCommand.fs" />
+    <Compile Include="src/Command/PropertiesCommand.fs" />
   </ItemGroup>
 
   <ItemGroup>

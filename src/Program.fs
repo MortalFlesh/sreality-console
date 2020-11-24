@@ -11,14 +11,14 @@ let main argv =
         info ApplicationInfo.MainTitle
         version AssemblyVersionInformation.AssemblyVersion
 
-        command "sreality:flats" {
-            Description = "Checks a flats on sreality."
+        command "sreality:property" {
+            Description = "Search properties on sreality."
             Help = None
             Arguments = []
             Options = []
             Initialize = None
             Interact = None
-            Execute = Command.FlatsCommand.execute
+            Execute = Command.PropertiesCommand.execute
         }
 
         command "about" {

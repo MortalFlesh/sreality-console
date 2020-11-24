@@ -27,6 +27,10 @@ module Sreality =
         HasPanorama: bool
     }
 
+    [<RequireQualifiedAccess>]
+    module Property =
+        let searchTitle { SearchTitle = searchTitle } = searchTitle
+
     type private BaseOptions = {
         BaseUrl: string
         Method: string
