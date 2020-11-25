@@ -19,7 +19,6 @@ module PropertiesCommand =
 
     [<RequireQualifiedAccess>]
     module private SearchResult =
-
         let value = function
             | Removed value
             | Current value
@@ -38,7 +37,67 @@ module PropertiesCommand =
             | New value -> Some value
             | _ -> None
 
+    let private checkWithStorage output notify currentValues storage  =
+        let previousValues = storage.Load() |> List.map Old
+        let currentValues = currentValues |> List.map Current
+
+        output.Section <| sprintf "Save results [%d] to %s" currentValues.Length storage.Title
+
+        let outputValues title values =
+            values
+            |> List.map (SearchResult.value >> Sreality.Property.id >> List.singleton)
+            |> output.Options (sprintf "%s results [%d]" title values.Length)
+
+        let newValues =
+            currentValues
+            |> List.filterNotInBy
+                (SearchResult.value >> storage.GetKey)
+                (previousValues |> List.map (SearchResult.value >> storage.GetKey))
+            |> List.map (SearchResult.bind New)
+
+        let removedValues =
+            previousValues
+            |> List.filterNotInBy
+                (SearchResult.value >> storage.GetKey)
+                (currentValues |> List.map (SearchResult.value >> storage.GetKey))
+            |> List.map (SearchResult.bind New)
+
+        previousValues |> outputValues "Previous"
+        currentValues |> outputValues "Current"
+        newValues |> outputValues "New"
+        removedValues |> outputValues "Removed"
+
+        output.NewLine()
+
+        storage.Clear()
+
+        currentValues
+        |> List.map (SearchResult.value >> (fun p ->
+            { p with Status = if newValues |> List.contains (New p) then "Nová" else "" }
+        ))
+        |> storage.Save
+
+        [
+            match newValues with
+            | [] -> ()
+            | newValues -> newValues |> List.length |> sprintf "Našlo se %d nových nabídek."
+
+            match removedValues with
+            | [] -> ()
+            | removedValues -> removedValues |> List.length |> sprintf "%d z předchozích nabídek, už neexistuje."
+        ]
+        |> function
+            | [] -> ()
+            | messages ->
+                messages
+                |> String.concat "\n"
+                |> notify
+
     let execute: ExecuteCommand = fun (input, output) ->
+
+        // GoogleSheets.save "test"
+        // failwithf "Done..."
+
         output.Title "Search Properties"
 
         let config =
@@ -47,20 +106,39 @@ module PropertiesCommand =
             |> Config.parse
 
         let fileStorage =
-            match input with
-            | Input.HasOption "storage" storage ->
-                let storage = storage |> OptionValue.value "storage" |> Path.GetFullPath
-
-                FileStorage.create storage
+            let create path =
+                FileStorage.create (path |> Path.GetFullPath)
                     (Sreality.Property.id >> Key)
-                    Sreality.Property.serialize
-                    Sreality.Property.parse
+                    Sreality.Property.serializeToJson
+                    Sreality.Property.parseJson
+
+            match input, config with
+            | Input.HasOption "storage" storage, _ ->
+                storage
+                |> OptionValue.value "storage"
+                |> create
+                |> Some
+
+            | _, Some { FileStorage = Some storage } ->
+                storage
+                |> create
+                |> Some
+
+            | _ -> None
+
+        let googleSheets =
+            match config with
+            | Some { GoogleSheets = Some config } ->
+                GoogleSheets.create config
+                    (Sreality.Property.id >> Key)
+                    (Sreality.Property.serializeToSeparatedValues ";")
+                    (Sreality.Property.parseValues ";")
                 |> Some
             | _ -> None
 
         let notify message =
             match config with
-            | Some { Notifications = notifications } -> Whatsapp.notify notifications message
+            | Some { Notifications = Some notifications } -> Whatsapp.notify notifications message
             | _ -> output.Message message
 
         let results =
@@ -76,61 +154,8 @@ module PropertiesCommand =
 
         match results with
         | Ok currentValues ->
-            fileStorage
-            |> Option.iter (fun storage ->
-                let previousValues = storage.Load() |> List.map Old
-                let currentValues = currentValues |> List.map Current
-
-                output.Section <| sprintf "Save results [%d] to %s" currentValues.Length storage.Title
-
-                let outputValues title values =
-                    values
-                    |> List.map (SearchResult.value >> Sreality.Property.id >> List.singleton)
-                    |> output.Options (sprintf "%s results [%d]" title values.Length)
-
-                let newValues =
-                    currentValues
-                    |> List.filterNotInBy
-                        (SearchResult.value >> storage.GetKey)
-                        (previousValues |> List.map (SearchResult.value >> storage.GetKey))
-                    |> List.map (SearchResult.bind New)
-
-                let removedValues =
-                    previousValues
-                    |> List.filterNotInBy
-                        (SearchResult.value >> storage.GetKey)
-                        (currentValues |> List.map (SearchResult.value >> storage.GetKey))
-                    |> List.map (SearchResult.bind New)
-
-                previousValues |> outputValues "Previous"
-                currentValues |> outputValues "Current"
-                newValues |> outputValues "New"
-                removedValues |> outputValues "Removed"
-
-                output.NewLine()
-
-                storage.Clear()
-
-                currentValues
-                |> List.map SearchResult.value
-                |> storage.Save
-
-                [
-                    match newValues with
-                    | [] -> ()
-                    | newValues -> newValues |> List.length |> sprintf "Našlo se %d nových nabídek."
-
-                    match removedValues with
-                    | [] -> ()
-                    | removedValues -> removedValues |> List.length |> sprintf "%d z předchozích nabídek, už neexistuje."
-                ]
-                |> function
-                    | [] -> ()
-                    | messages ->
-                        messages
-                        |> String.concat "\n"
-                        |> notify
-            )
+            fileStorage |> Option.iter (checkWithStorage output notify currentValues)
+            googleSheets |> Option.iter (checkWithStorage output notify currentValues)
 
             if output.IsVerbose() then
                 let ``---`` = [ "---"; "---"; "---"]

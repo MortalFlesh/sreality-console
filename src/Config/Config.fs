@@ -2,10 +2,13 @@ namespace MF.Config
 
 open MF.Api
 open MF.Notification
+open MF.Storage
 
 type Config = {
     Sreality: Sreality.Search list
-    Notifications: Whatsapp.Config
+    Notifications: Whatsapp.Config option
+    FileStorage: string option
+    GoogleSheets: GoogleSheets.Config option
 }
 
 [<RequireQualifiedAccess>]
@@ -36,10 +39,25 @@ module Config =
                     )
                     |> Seq.toList
 
-                Notifications = {
-                    AccountSid = parsed.Notifications.AccountSid
-                    AuthToken = parsed.Notifications.AuthToken
-                    TwilioNumber = parsed.Notifications.TwilioNumber
-                    TargetNumber = parsed.Notifications.TargetNumber
-                }
+                Notifications = parsed.Notifications |> Option.map (fun notifications ->
+                    {
+                        AccountSid = notifications.AccountSid
+                        AuthToken = notifications.AuthToken
+                        TwilioNumber = notifications.TwilioNumber
+                        TargetNumber = notifications.TargetNumber
+                    }
+                )
+
+                FileStorage = parsed.FileStorage |> Option.map (fun storage ->
+                    storage.File
+                )
+
+                GoogleSheets = parsed.GoogleSheets |> Option.map (fun storage ->
+                    {
+                        Credentials = storage.Credentials
+                        Token = storage.Token
+                        SpreadsheetId = storage.SpreadsheetId
+                        Tab = storage.Tab
+                    }
+                )
             }

@@ -19,7 +19,8 @@
         "is_new": false,
         "has_floor_plan": false,
         "has_video": false,
-        "has_panorama": false
+        "has_panorama": false,
+        "status": "nový"
     },
     {
         "search_title": "Byty 4+1 a vetsi, do 8m v Brně",

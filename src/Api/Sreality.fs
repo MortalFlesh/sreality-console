@@ -25,6 +25,7 @@ module Sreality =
         HasFloorPlan: bool
         HasVideo: bool
         HasPanorama: bool
+        Status: string
     }
 
     [<RequireQualifiedAccess>]
@@ -36,9 +37,26 @@ module Sreality =
         let searchTitle { SearchTitle = searchTitle } = searchTitle
         let id { Id = id } = id
 
-        let serialize (property: Property) = property |> Serialize.toJson
+        let serializeToJson (property: Property) = property |> Serialize.toJson
+        let serializeToSeparatedValues separator (property: Property) =
+            [
+                property.SearchTitle
+                property.Id
+                property.Name
+                property.Locality
+                (property.Price |> string)
+                (property.Images |> List.length |> string)
+                property.Detail
+                (property.Labels |> String.concat ", ")
+                (if property.IsNew then "Ano" else "Ne")
+                (if property.HasFloorPlan then "Ano" else "Ne")
+                (if property.HasVideo then "Ano" else "Ne")
+                (if property.HasPanorama then "Ano" else "Ne")
+                property.Status
+            ]
+            |> String.concat separator
 
-        let parse (value: string) =
+        let parseJson (value: string) =
             try
                 let p = value |> PropertySchema.Parse
 
@@ -55,9 +73,49 @@ module Sreality =
                     HasFloorPlan = p.HasFloorPlan
                     HasVideo = p.HasVideo
                     HasPanorama = p.HasPanorama
+                    Status = p.Status |> Option.defaultValue ""
                 }
 
             with _ -> None
+
+        let parseValues (separator: string) = function
+            | String.IsEmpty -> None
+            | value ->
+                let p = { SearchTitle = ""; Id = ""; Name = ""; Locality = ""; Price = 0; Images = []; Detail = ""; Labels = []; IsNew = false; HasFloorPlan = false; HasVideo = false; HasPanorama = false; Status = "" }
+
+                match value.Split separator |> Seq.toList with
+                | [ searchTitle; id; name; locality; price; _images; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama; _ (* status *) ]
+                | [ searchTitle; id; name; locality; price; _images; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama ] ->
+                    Some {
+                        p with
+                            SearchTitle = searchTitle
+                            Id = id
+                            Name = name
+                            Locality = locality
+                            Price = try price |> int with _ -> 0
+                            Detail = detail
+                            Labels = labels.Split ',' |> Seq.map (String.trim ' ') |> Seq.toList
+                            IsNew = isNew = "Ano"
+                            HasFloorPlan = hasFloorPlan = "Ano"
+                            HasVideo = hasVideo = "Ano"
+                            HasPanorama = hasPanorama = "Ano"
+                    }
+                | [ searchTitle; id; name; locality; price ] ->
+                    Some {
+                        p with
+                            SearchTitle = searchTitle
+                            Id = id
+                            Name = name
+                            Locality = locality
+                            Price = try price |> int with _ -> 0
+                    }
+                | [ searchTitle; id ] ->
+                    Some {
+                        p with
+                            SearchTitle = searchTitle
+                            Id = id
+                    }
+                | _ -> None
 
     type private BaseOptions = {
         BaseUrl: string
@@ -99,6 +157,7 @@ module Sreality =
                             HasFloorPlan = estate.HasFloorPlan > 0
                             HasVideo = estate.HasVideo
                             HasPanorama = estate.HasPanorama > 0
+                            Status = ""
                         }
                     })
                     |> Seq.toList
