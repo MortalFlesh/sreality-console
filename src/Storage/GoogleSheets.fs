@@ -37,6 +37,11 @@ module GoogleSheets =
                 FileDataStore(config.Token, true)
             ).Result
 
+        credentials.RefreshTokenAsync(CancellationToken.None)
+        |> Async.AwaitTask
+        |> Async.map ignore
+        |> Async.Start
+
         new SheetsService(
             BaseClientService.Initializer(
                 HttpClientInitializer = credentials,
