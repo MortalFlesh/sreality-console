@@ -40,7 +40,6 @@ module FileStorage =
         if path |> File.Exists |> not then []
         else
             path
-            |> tee (printfn "Read storage: %s")
             |> FileSystem.readLines
             |> List.choose parse
 

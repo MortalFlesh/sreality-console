@@ -86,31 +86,37 @@ module GoogleSheets =
             Values = values
         )
 
+    let private logError context (e: exn) =
+        eprintfn "[GoogleSheets][%s] %s\n%A" context e.Message e
+
     let private saveItems config (serialize: _ -> string) = function
         | [] -> ()
         | items ->
-            let valuesRange =
-                items
-                |> List.choose (fun item ->
-                    let row = serialize item
+            try
+                let valuesRange =
+                    items
+                    |> List.choose (fun item ->
+                        let row = serialize item
 
-                    match row.Split ";" |> Seq.toList with
-                    | [] -> None
-                    | values -> Some values
-                )
-                |> valuesRange config.Tab ("A", 2)
+                        match row.Split ";" |> Seq.toList with
+                        | [] -> None
+                        | values -> Some values
+                    )
+                    |> valuesRange config.Tab ("A", 2)
 
-            use service = createClient config
+                use service = createClient config
 
-            let requestBody =
-                BatchUpdateValuesRequest(
-                    ValueInputOption = "USER_ENTERED",
-                    Data = data [ valuesRange ]
-                )
+                let requestBody =
+                    BatchUpdateValuesRequest(
+                        ValueInputOption = "USER_ENTERED",
+                        Data = data [ valuesRange ]
+                    )
 
-            let request = service.Spreadsheets.Values.BatchUpdate(requestBody, config.SpreadsheetId)
+                let request = service.Spreadsheets.Values.BatchUpdate(requestBody, config.SpreadsheetId)
 
-            request.Execute() |> ignore
+                request.Execute() |> ignore
+
+            with e -> e |> logError "Save"
 
     let private loadItems config parse () =
         try
@@ -130,10 +136,19 @@ module GoogleSheets =
                 )
                 |> Seq.choose parse
                 |> Seq.toList
-        with _ -> []
+
+        with e ->
+            e |> logError "Load"
+            []
 
     let private clear config () =
-        ()
+        try
+            use service = createClient config
+
+            let request = service.Spreadsheets.Values.Clear(ClearValuesRequest(), config.SpreadsheetId, range config.Tab "A2" "M100")
+            request.Execute() |> ignore
+
+        with e -> e |> logError "Clear"
 
     /// Serialize should return values separated by ;
     /// Parse will get values separated by ;

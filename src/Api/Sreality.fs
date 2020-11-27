@@ -2,6 +2,8 @@ namespace MF.Api
 
 // See https://github.com/mecv01/sreality-client
 
+open System
+
 [<RequireQualifiedAccess>]
 module Sreality =
     open FSharp.Data
@@ -18,7 +20,6 @@ module Sreality =
         Name: string
         Locality: string
         Price: int
-        Images: string list
         Detail: string
         Labels: string list
         IsNew: bool
@@ -26,6 +27,7 @@ module Sreality =
         HasVideo: bool
         HasPanorama: bool
         Status: string
+        UpdatedAt: DateTime
     }
 
     [<RequireQualifiedAccess>]
@@ -45,7 +47,6 @@ module Sreality =
                 property.Name
                 property.Locality
                 (property.Price |> string)
-                (property.Images |> List.length |> string)
                 property.Detail
                 (property.Labels |> String.concat ", ")
                 (if property.IsNew then "Ano" else "Ne")
@@ -53,6 +54,7 @@ module Sreality =
                 (if property.HasVideo then "Ano" else "Ne")
                 (if property.HasPanorama then "Ano" else "Ne")
                 property.Status
+                property.UpdatedAt.ToString("HH:mm dd.MM.yyyy")
             ]
             |> String.concat separator
 
@@ -66,7 +68,6 @@ module Sreality =
                     Name = p.Name
                     Locality = p.Locality
                     Price = p.Price
-                    Images = p.Images |> Seq.toList
                     Detail = p.Detail
                     Labels = p.Labels |> Seq.toList
                     IsNew = p.IsNew
@@ -74,6 +75,7 @@ module Sreality =
                     HasVideo = p.HasVideo
                     HasPanorama = p.HasPanorama
                     Status = p.Status |> Option.defaultValue ""
+                    UpdatedAt = DateTime.Now
                 }
 
             with _ -> None
@@ -81,7 +83,7 @@ module Sreality =
         let parseValues (separator: string) = function
             | String.IsEmpty -> None
             | value ->
-                let p = { SearchTitle = ""; Id = ""; Name = ""; Locality = ""; Price = 0; Images = []; Detail = ""; Labels = []; IsNew = false; HasFloorPlan = false; HasVideo = false; HasPanorama = false; Status = "" }
+                let p = { SearchTitle = ""; Id = ""; Name = ""; Locality = ""; Price = 0; Detail = ""; Labels = []; IsNew = false; HasFloorPlan = false; HasVideo = false; HasPanorama = false; Status = ""; UpdatedAt = DateTime.Now }
 
                 match value.Split separator |> Seq.toList with
                 | [ searchTitle; id; name; locality; price; _images; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama; _ (* status *) ]
@@ -150,7 +152,6 @@ module Sreality =
                             Name = estate.Name
                             Locality = estate.Locality
                             Price = estate.PriceCzk.ValueRaw
-                            Images = estate.Links.Images |> Seq.map (fun i -> i.Href) |> Seq.toList
                             Detail = detailUrl id
                             Labels = estate.Labels |> Seq.toList
                             IsNew = estate.New
@@ -158,6 +159,7 @@ module Sreality =
                             HasVideo = estate.HasVideo
                             HasPanorama = estate.HasPanorama > 0
                             Status = ""
+                            UpdatedAt = DateTime.Now
                         }
                     })
                     |> Seq.toList
