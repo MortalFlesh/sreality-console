@@ -54,7 +54,7 @@ module Sreality =
                 (if property.HasVideo then "Ano" else "Ne")
                 (if property.HasPanorama then "Ano" else "Ne")
                 property.Status
-                property.UpdatedAt.ToString("HH:mm dd.MM.yyyy")
+                property.UpdatedAt.ToUniversalTime().AddHours(1.).ToString("HH:mm dd.MM.yyyy")
             ]
             |> String.concat separator
 
