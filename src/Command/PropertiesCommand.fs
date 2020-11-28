@@ -77,14 +77,21 @@ module PropertiesCommand =
         ))
         |> storage.Save
 
-        [
-            match newValues with
-            | [] -> ()
-            | newValues -> newValues |> List.length |> sprintf "Našlo se %d nových nabídek."
+        let notification title values =
+            [
+                match values with
+                | [] -> ()
+                | values ->
+                    yield values |> List.length |> title
+                    yield!
+                        values
+                        |> List.groupBy (SearchResult.value >> Sreality.Property.searchTitle)
+                        |> List.map (fun (searchTitle, values) -> (sprintf "- %s [%d]" searchTitle values.Length))
+            ]
 
-            match removedValues with
-            | [] -> ()
-            | removedValues -> removedValues |> List.length |> sprintf "%d z předchozích nabídek, už neexistuje."
+        [
+            yield! newValues |> notification (sprintf "Našlo se %d nových nabídek.")
+            yield! removedValues |> notification (sprintf "%d z předchozích nabídek, už neexistuje.")
         ]
         |> function
             | [] -> ()
