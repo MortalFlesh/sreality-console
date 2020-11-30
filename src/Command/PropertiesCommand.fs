@@ -84,8 +84,13 @@ module PropertiesCommand =
 
         storage.Clear()
 
-        currentValues @ removedValues
-        |> List.map SearchResult.value
+        (
+            currentValues
+            |> List.map (SearchResult.value >> (fun p ->
+                { p with Status = if newValues |> List.exists (SearchResult.value >> storage.GetKey >> (=) (p |> storage.GetKey)) then "Nová" else p.Status }
+            ))
+        )
+        @ (removedValues |> List.map SearchResult.value)
         |> storage.Save
 
         let notification title values =
