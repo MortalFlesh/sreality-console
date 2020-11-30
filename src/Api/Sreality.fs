@@ -86,8 +86,24 @@ module Sreality =
                 let p = { SearchTitle = ""; Id = ""; Name = ""; Locality = ""; Price = 0; Detail = ""; Labels = []; IsNew = false; HasFloorPlan = false; HasVideo = false; HasPanorama = false; Status = ""; UpdatedAt = DateTime.Now }
 
                 match value.Split separator |> Seq.toList with
-                | [ searchTitle; id; name; locality; price; _images; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama; _ (* status *) ]
-                | [ searchTitle; id; name; locality; price; _images; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama ] ->
+                | [ searchTitle; id; name; locality; price; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama; status; _ (* updatedAt *) ]
+                | [ searchTitle; id; name; locality; price; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama; status ] ->
+                    Some {
+                        p with
+                            SearchTitle = searchTitle
+                            Id = id
+                            Name = name
+                            Locality = locality
+                            Price = try price |> int with _ -> 0
+                            Detail = detail
+                            Labels = labels.Split ',' |> Seq.map (String.trim ' ') |> Seq.toList
+                            IsNew = isNew = "Ano"
+                            HasFloorPlan = hasFloorPlan = "Ano"
+                            HasVideo = hasVideo = "Ano"
+                            HasPanorama = hasPanorama = "Ano"
+                            Status = status
+                    }
+                | [ searchTitle; id; name; locality; price; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama ] ->
                     Some {
                         p with
                             SearchTitle = searchTitle

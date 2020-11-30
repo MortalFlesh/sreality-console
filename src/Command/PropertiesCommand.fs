@@ -39,13 +39,26 @@ module PropertiesCommand =
 
     let private checkWithStorage output notify currentValues storage  =
         let previousValues = storage.Load() |> List.map Old
-        let currentValues = currentValues |> List.map Current
+        let currentValues =
+            currentValues
+            |> List.map (fun p ->
+                let k = p |> storage.GetKey
+
+                let previousStatus =
+                    match previousValues |> List.tryFind (SearchResult.value >> storage.GetKey >> (=) k) with
+                    | Some previous ->
+                        let p: Sreality.Property = previous |> SearchResult.value
+                        p.Status
+                    | _ -> ""
+
+                Current { p with Status = previousStatus }
+            )
 
         output.Section <| sprintf "Save results [%d] to %s" currentValues.Length storage.Title
 
         let outputValues title values =
             values
-            |> List.map (SearchResult.value >> Sreality.Property.id >> List.singleton)
+            |> List.map (SearchResult.value >> (fun (p: Sreality.Property) -> [ p.Id; p.Status ]))
             |> output.Options (sprintf "%s results [%d]" title values.Length)
 
         let newValues =
@@ -53,14 +66,14 @@ module PropertiesCommand =
             |> List.filterNotInBy
                 (SearchResult.value >> storage.GetKey)
                 (previousValues |> List.map (SearchResult.value >> storage.GetKey))
-            |> List.map (SearchResult.bind New)
+            |> List.map (SearchResult.bind (fun p -> New { p with Status = "Nová" }))
 
         let removedValues =
             previousValues
             |> List.filterNotInBy
                 (SearchResult.value >> storage.GetKey)
                 (currentValues |> List.map (SearchResult.value >> storage.GetKey))
-            |> List.map (SearchResult.bind New)
+            |> List.map (SearchResult.bind (fun p -> Removed { p with Status = "Odstraněná" }))
 
         previousValues |> outputValues "Previous"
         currentValues |> outputValues "Current"
@@ -71,10 +84,8 @@ module PropertiesCommand =
 
         storage.Clear()
 
-        currentValues
-        |> List.map (SearchResult.value >> (fun p ->
-            { p with Status = if newValues |> List.contains (New p) then "Nová" else "" }
-        ))
+        currentValues @ removedValues
+        |> List.map SearchResult.value
         |> storage.Save
 
         let notification title values =
@@ -165,14 +176,14 @@ module PropertiesCommand =
             googleSheets |> Option.iter (checkWithStorage output notify currentValues)
 
             if output.IsVerbose() then
-                let ``---`` = [ "---"; "---"; "---"]
+                let ``---`` = [ "---"; "---"; "---"; "---" ]
                 // todo if verbose
                 currentValues
                 |> List.groupBy Sreality.Property.searchTitle
                 |> List.collect (fun (searchTitle, properties) ->
                     [
                         yield ``---``
-                        yield [ "<c:gray>Search</c>"; sprintf "<c:cyan>%s</c>" searchTitle; sprintf "<c:magenta>%d</c>" properties.Length ]
+                        yield [ "<c:gray>Search</c>"; sprintf "<c:cyan>%s</c>" searchTitle; ""; sprintf "<c:magenta>%d</c>" properties.Length ]
                         yield ``---``
 
                         yield!
@@ -182,11 +193,12 @@ module PropertiesCommand =
                                     property.Id |> sprintf "<c:magenta>%s</c>"
                                     property.Name |> sprintf "<c:yellow>%s</c>"
                                     property.Price |> sprintf "<c:cyan>%d</c>"
+                                    property.Status |> sprintf "<c:dark-yellow>%s</c>"
                                 ]
                             )
                     ]
                 )
-                |> output.Table [ "Id"; "Name"; "Price" ]
+                |> output.Table [ "Id"; "Name"; "Price"; "Status" ]
 
         | Error errors -> errors |> List.iter output.Error
 
