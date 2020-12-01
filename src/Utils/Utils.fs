@@ -1,4 +1,4 @@
-namespace MF.Sreality.Console
+namespace MF.Utils
 
 [<RequireQualifiedAccess>]
 module FileSystem =
@@ -198,24 +198,28 @@ module Utils =
         a
 
 [<RequireQualifiedAccess>]
-module Diagnostics =
-    open System
+module Serialize =
+    module private Json =
+        open Newtonsoft.Json
+        open Newtonsoft.Json.Serialization
 
-    let private diagnostics name execution =
-        let stopWatch = Diagnostics.Stopwatch.StartNew()
-        let ret = execution()
-        stopWatch.Stop()
+        let private options () =
+            JsonSerializerSettings (
+                Formatting = Formatting.None,
+                ContractResolver =
+                    DefaultContractResolver (
+                        NamingStrategy = SnakeCaseNamingStrategy()
+                    )
+            )
 
-        ret, Some (name, stopWatch)
+        let serialize obj =
+            JsonConvert.SerializeObject (obj, options())
 
-    let run withDiagnostics name execution =
-        if withDiagnostics then diagnostics name execution
-        else execution(), None
+        let serializePretty obj =
+            let options = options()
+            options.Formatting <- Formatting.Indented
 
-    let showResults (output: MF.ConsoleApplication.Output) diagnostics =
-        diagnostics
-        |> List.choose id
-        |> List.map (fun (name, (stopWatch: Diagnostics.Stopwatch)) ->
-            [name; sprintf "%f" stopWatch.Elapsed.TotalMilliseconds]
-        )
-        |> output.Table [ "Task"; "Duration (ms)" ]
+            JsonConvert.SerializeObject (obj, options)
+
+    let toJsonPretty: obj -> string = Json.serializePretty
+    let toJson: obj -> string = Json.serialize

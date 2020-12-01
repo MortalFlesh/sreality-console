@@ -1,0 +1,49 @@
+[
+    {
+        "search_title": "Byty 4+1 a vetsi, do 8m v Brně",
+        "id": "1862127196",
+        "name": "Prodej bytu 5+1 127 m²",
+        "locality": "Špitálka, Brno - Zábrdovice",
+        "price": 6600000,
+        "images": [
+            "https://d18-a.sdn.cz/d_18/c_img_gQ_Q/65WTib.jpeg?fl=res,400,300,3|shr,,20|jpg,90",
+            "https://d18-a.sdn.cz/d_18/c_img_gQ_Q/LkPTic.jpeg?fl=res,400,300,3|shr,,20|jpg,90",
+            "https://d18-a.sdn.cz/d_18/c_img_gR_P/lijkNO.jpeg?fl=res,400,300,3|shr,,20|jpg,90"
+        ],
+        "detail": "https://www.sreality.cz/detail/1/2/3/4/1862127196",
+        "labels": [
+            "Sklep",
+            "Škola 5 min. pěšky",
+            "Restaurace 5 min. pěšky"
+        ],
+        "is_new": false,
+        "has_floor_plan": false,
+        "has_video": false,
+        "has_panorama": false,
+        "status": "nový"
+    },
+    {
+        "search_title": "Byty 4+1 a vetsi, do 8m v Brně",
+        "id": "2901339228",
+        "name": "Prodej bytu 4+1 140 m²",
+        "locality": "Trávníky, Brno - Černá Pole",
+        "price": 7890000,
+        "images": [
+            "https://d18-a.sdn.cz/d_18/c_img_gU_Q/epACAn.jpeg?fl=res,400,300,3|shr,,20|jpg,90",
+            "https://d18-a.sdn.cz/d_18/c_img_gS_P/TEcB8m.jpeg?fl=res,400,300,3|shr,,20|jpg,90",
+            "https://d18-a.sdn.cz/d_18/c_img_gQ_P/e0BB6M.jpeg?fl=res,400,300,3|shr,,20|jpg,90"
+        ],
+        "detail": "https://www.sreality.cz/detail/1/2/3/4/2901339228",
+        "labels": [
+            "Terasa",
+            "Sklep",
+            "Parkování",
+            "Tramvaj 2 min. pěšky",
+            "Pošta 7 min. pěšky"
+        ],
+        "is_new": false,
+        "has_floor_plan": true,
+        "has_video": false,
+        "has_panorama": false
+    }
+]

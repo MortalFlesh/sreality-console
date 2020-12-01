@@ -28,3 +28,4 @@ paket-files/
 
 # application
 dist
+.sreality.json

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="AssemblyInfo.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../Utils/Utils.fsproj" />
+        <ProjectReference Include="../ErrorHandling/ErrorHandling.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="FileStorage.fs" />
+        <Compile Include="GoogleSheets.fs" />
+    </ItemGroup>
+
+    <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>

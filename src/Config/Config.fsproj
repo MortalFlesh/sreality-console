@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="AssemblyInfo.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../Api/Api.fsproj" />
+        <ProjectReference Include="../Notification/Notification.fsproj" />
+        <ProjectReference Include="../Storage/Storage.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="Config.fs" />
+    </ItemGroup>
+
+    <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>

@@ -1,0 +1,20 @@
+[
+    {
+        "sreality": [
+            {
+                "title": "Flats",
+                "param": "category_main_cb=1&category_type_cb=1"
+            },
+            {
+                "title": "Houses",
+                "param": "category_main_cb=2&category_type_cb=1"
+            }
+        ],
+        "notifications": {
+            "accountSid": "[Twilio account SID]",
+            "authToken": "[AuthToken]",
+            "twilioNumber": "+1...",
+            "targetNumber": "[your phonenumber]"
+        }
+    }
+]

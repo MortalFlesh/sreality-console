@@ -1,4 +1,4 @@
-namespace ErrorHandling
+namespace MF.ErrorHandling
 
 /// Functions for Result type (functor and monad).
 /// For applicatives, see Validation.

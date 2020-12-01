@@ -13,6 +13,14 @@ It is a standalone (self-contained) _one-file_ console application, which allows
 - compare previous and current result, to determine what is new
 - send you a notification, when anything new is presented
 
+## Configuration
+Configuration must be in the file `.sreality.json` in the same directory, where the console is executed.
+
+### .sreality.json
+```json
+...todo...
+```
+
 ---
 ### Development
 
