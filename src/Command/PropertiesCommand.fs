@@ -33,12 +33,19 @@ module PropertiesCommand =
             | Old value -> Some value
             | _ -> None
 
+        let removedValue = function
+            | Removed value -> Some value
+            | _ -> None
+
         let newValue = function
             | New value -> Some value
             | _ -> None
 
     let private checkWithStorage output notify currentValues storage  =
-        let previousValues = storage.Load() |> List.map Old
+        let allPreviousValues = storage.Load() |> List.map (fun (p: Sreality.Property) -> if p.Status = "Odstraněná" then Removed p else Old p)
+        let previouslyRemoved = allPreviousValues |> List.choose SearchResult.removedValue |> List.map Removed
+        let previousValues = allPreviousValues |> List.choose SearchResult.oldValue |> List.map Old
+
         let currentValues =
             currentValues
             |> List.map (fun p ->
@@ -76,6 +83,7 @@ module PropertiesCommand =
             |> List.map (SearchResult.bind (fun p -> Removed { p with Status = "Odstraněná" }))
 
         previousValues |> outputValues "Previous"
+        previouslyRemoved |> outputValues "Previous Removed"
         currentValues |> outputValues "Current"
         newValues |> outputValues "New"
         removedValues |> outputValues "Removed"
@@ -86,10 +94,12 @@ module PropertiesCommand =
 
         (
             currentValues
+            // todo - move this logic to `let currentValues` so the status would be there corrected already
             |> List.map (SearchResult.value >> (fun p ->
                 { p with Status = if newValues |> List.exists (SearchResult.value >> storage.GetKey >> (=) (p |> storage.GetKey)) then "Nová" else p.Status }
             ))
         )
+        @ (previouslyRemoved |> List.map SearchResult.value)
         @ (removedValues |> List.map SearchResult.value)
         |> storage.Save
 
